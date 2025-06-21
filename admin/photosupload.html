@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Church</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../assets/jsicon.png">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f7f6f2;
+            color: #333;
+        }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #4a6fa5;
+            padding: 0.5rem 2rem;
+            position: relative;
+            height: 70px;
+        }
+        .categories {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem; /* Increased gap for better spacing */
+            padding: 1rem 0; /* Added padding for a professional look */
+        }
+        .category-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 0.5rem;
+            background: #3160a5;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px #0001;
+            overflow: hidden;
+        }
+        .category-list li {
+            background: #fff;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .category-list li:hover {
+            background: #e3eafc;
+        }
+        .church-name {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fff;
+            letter-spacing: 2px;
+            text-shadow: 1px 1px 4px #3a4c6e77;
+        }
+        .custom-section {
+            margin: 3rem auto;
+            max-width: 1280px;
+            min-height: 520px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px #0002;
+            padding: 4.5rem 3.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .custom-section:hover {
+            opacity: 0.8; /* Makes the section slightly transparent */
+            transform: scale(1.02); /* Adds a subtle zoom effect */
+        }
+        .custom-section h2 {
+            color: #4a6fa5;
+            margin-bottom: 1.3rem;
+            font-size: 2.8rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        .custom-section p {
+            font-size: 1.4rem;
+            color: #555;
+            font-weight: 500;
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        }
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.25;
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 1;
+            pointer-events: none;
+        }
+        .content {
+            position: relative;
+            z-index: 2;
+        }
+        .content a {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.8rem 1.8rem;
+            background: linear-gradient(90deg, #ffe066, #ffcc33);
+            color: #333;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        }
+
+        .content a:hover {
+            transform: translateY(-6px) scale(1.08);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(90deg, #ffcc33, #ffe066);
+        }
+
+        .content a:active {
+            transform: translateY(3px) scale(0.97);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content {
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .prayer-book-card {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .event-scroller .event-item {
+            animation: fadeInUp 1.2s ease-out;
+        }
+        .prayer-books-section {
+            margin: 3rem auto 0 auto;
+            max-width: 900px;
+            text-align: center;
+        }
+        .prayer-books-title {
+            font-size: 2.3rem;
+            font-weight: 800;
+            text-decoration: underline;
+            margin-bottom: 2.5rem;
+            letter-spacing: 1.2px;
+            color: #204a87;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+        .prayer-books-list {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            flex-wrap: wrap;
+        }
+        .prayer-book-card {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px #0001;
+            padding: 2rem 1.5rem 1.2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.25s, box-shadow 0.25s;
+            cursor: pointer;
+            min-width: 160px;
+            max-width: 200px;
+            animation: prayerBookAppear 0.7s ease;
+        }
+        .prayer-book-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 8px 32px #4a6fa533;
+        }
+        .prayer-book-card img {
+            width: 72px;
+            height: 72px;
+            margin-bottom: 1.1rem;
+            border-radius: 10px;
+            background: #f7f6f2;
+            box-shadow: 0 1px 6px #0001;
+        }
+        .prayer-book-label {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #4a6fa5;
+            margin-top: 0.5rem;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        }
+        @keyframes prayerBookAppear {
+            from { opacity: 0; transform: translateY(30px) scale(0.95);}
+            to { opacity: 1; transform: translateY(0) scale(1);}
+        }
+        .main-layout {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 2.5rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .main-content {
+            flex: 1 1 0;
+            min-width: 0;
+        }
+        .sidebar {
+            width: 340px;
+            background: #f8faff;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px #0001;
+            padding: 2rem 1.2rem 1.5rem 1.2rem;
+            margin-top: 3rem;
+            font-size: 1.04rem;
+            color: #2d3a4a;
+            position: sticky;
+            top: 2rem;
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+        }
+        .sidebar-section {
+            margin-bottom: 2.2rem;
+        }
+        .sidebar-section h3 {
+            color: #4a6fa5;
+            font-size: 1.4rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin: 0 0 0.8rem 0;
+            border-bottom: 2px solid #e3eafc;
+            padding-bottom: 0.4rem;
+            letter-spacing: 1px;
+        }
+        .sidebar-event, .sidebar-news, .sidebar-contact {
+            margin-bottom: 1.2rem;
+            background: #fff;
+            border-radius: 8px;
+            padding: 1rem 0.8rem;
+            box-shadow: 0 1px 6px #0001;
+        }
+        .sidebar-event b, .sidebar-news b {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #204a87;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-contact b {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #4a6fa5;
+            text-transform: uppercase;
+        }
+
+        .sidebar-contact a {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #3160a5;
+            text-decoration: none;
+            word-break: break-word;
+            transition: color 0.3s ease;
+        }
+
+        .sidebar-contact a:hover {
+            color: #204a87;
+            text-decoration: underline;
+        }
+
+        .has-submenu {
+            position: relative;
+        }
+
+        .has-submenu > .submenu {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: 100%; /* Position below the parent */
+            background: #000; /* Solid black background */
+            padding: 10px 0;
+            min-width: 250px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(-10px); /* Start slightly above */
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+
+        .has-submenu:hover > .submenu,
+        .has-submenu:focus-within > .submenu {
+            display: block;
+            opacity: 1;
+            transform: translateY(0); /* Drop down smoothly */
+            pointer-events: auto;
+        }
+
+        .has-submenu > .submenu li {
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #fff;
+            list-style: none;
+            border-bottom: 1px solid #222;
+            transition: background 0.3s ease, padding-left 0.3s ease;
+        }
+
+        .has-submenu > .submenu li:last-child {
+            border-bottom: none;
+        }
+
+        .has-submenu > .submenu li:hover {
+            background: #222;
+            color: #ffe066;
+            padding-left: 25px;
+            border-left: 3px solid #ffe066;
+        }
+        @keyframes dropdownFadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(10px);}
+            to { opacity: 1; transform: translateX(-50%) translateY(0);}
+        }
+        .has-submenu .submenu li {
+            background: transparent !important; /* ensure no white background */
+            padding: 1rem 2.2rem 1rem 1.7rem;
+            border-radius: 0;
+            color: #fff !important; /* force white text */
+            font-size: 1.13rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s, padding-left 0.18s;
+            white-space: nowrap;
+            border-bottom: 1px solid #232c45; /* subtle divider */
+        }
+        .has-submenu .submenu li:last-child {
+            border-bottom: none;
+        }
+        .has-submenu > a, .has-submenu > span, .has-submenu {
+            font-weight: 700;
+            letter-spacing: 0.7px;
+            position: relative;
+        }
+        .has-submenu::after {
+            content: "▼";
+            font-size: 0.7em;
+            margin-left: 0.5em;
+            color: #ffe066;
+            vertical-align: middle;
+            transition: transform 0.2s;
+            display: inline-block;
+            font-weight: bold;
+        }
+        .has-submenu.active::after,
+        .has-submenu:hover::after,
+        .has-submenu:focus-within::after {
+            transform: rotate(-180deg);
+        }
+        .has-submenu:hover > .submenu,
+        .has-submenu:focus-within > .submenu,
+        .has-submenu.active > .submenu {
+            display: flex !important; /* force show submenu */
+            box-shadow: 0 12px 32px #204a8766, 0 1.5px 8px #0001;
+        }
+        @media (max-width: 1200px) {
+            .main-layout {
+                flex-direction: column;
+                gap: 0;
+            }
+            .sidebar {
+                width: 100%;
+                max-width: 98vw;
+                margin-top: 2rem;
+                position: static;
+                max-height: none;
+            }
+        }
+        @media (max-width: 900px) {
+            .main-layout {
+                flex-direction: column;
+                gap: 0;
+            }
+            .sidebar {
+                width: 100%;
+                max-width: 98vw;
+                margin-top: 2rem;
+                position: static;
+                max-height: none;
+            }
+            .category-list {
+                flex-wrap: wrap;
+                border-radius: 8px;
+            }
+            .has-submenu > .submenu {
+                left: 0;
+                right: auto;
+                top: 100%;
+                transform: none;
+                min-width: 180px;
+                border-radius: 12px;
+                box-shadow: 0 4px 16px #4a6fa522;
+            }
+        }
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                height: auto;
+                padding: 1rem;
+            }
+            .church-name {
+                position: static;
+                transform: none;
+                margin: 0.5rem 0;
+            }
+            .categories {
+                justify-content: center;
+            }
+            .custom-section {
+                padding: 1.2rem 0.2rem;
+                min-height: 260px;
+            }
+            .custom-section h2 {
+                font-size: 1.3rem;
+            }
+            .prayer-books-list {
+                flex-direction: column;
+                align-items: center;
+            }
+            .prayer-book-card {
+                min-width: 70vw;
+                max-width: 90vw;
+            }
+            .prayer-books-title {
+                font-size: 1.3rem;
+            }
+            .sidebar {
+                padding: 1rem 0.5rem;
+            }
+            .has-submenu > .submenu {
+                min-width: 98vw;
+                left: 0;
+                transform: none;
+                border-radius: 0 0 12px 12px;
+                box-shadow: 0 2px 8px #4a6fa511;
+            }
+        }
+        .main-nav {
+            width: 100%;
+            justify-content: center;
+            margin-top: 0.5rem;
+            padding: 0;
+        }
+        .pro-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0;
+            width: 100%;
+            background: #3160a5;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px #0001;
+            margin: 0;
+            padding: 0;
+        }
+        .pro-nav li {
+            background: none;
+            color: #fff;
+            font-weight: 600;
+            font-size: 1.08rem;
+            padding: 1rem 1.7rem;
+            border: none;
+            border-right: 1.5px solid #4a6fa5;
+            border-radius: 0;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+            letter-spacing: 0.5px;
+            position: relative;
+            text-align: center;
+            outline: none;
+            z-index: 2;
+            box-shadow: 0 1px 4px #0001;
+        }
+        .pro-nav li:last-child,
+        .category-list li:last-child {
+            border-right: none;
+        }
+        .pro-nav li:hover, .pro-nav li:focus,
+        .category-list li:hover, .category-list li:focus {
+            background: linear-gradient(90deg, #4a6fa5 60%, #3160a5 100%);
+            color: #ffe066;
+            box-shadow: 0 4px 16px #4a6fa522;
+        }
+        @media (max-width: 1100px) {
+            .pro-nav li {
+                padding: 0.8rem 1.2rem;
+                font-size: 1rem;
+            }
+        }
+        @media (max-width: 800px) {
+            .pro-nav {
+                flex-wrap: wrap;
+            }
+            .pro-nav li {
+                flex: 1 1 45%;
+                min-width: 140px;
+                border-bottom: 1px solid #4a6fa5;
+                border-right: none;
+            }
+            .pro-nav li:last-child {
+                border-bottom: none;
+            }
+        }
+        @media (max-width: 600px) {
+            .pro-nav {
+                flex-direction: column;
+                border-radius: 0 0 8px 8px;
+            }
+            .pro-nav li {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #4a6fa5;
+                padding: 0.8rem 0.5rem;
+            }
+            .pro-nav li:last-child {
+                border-bottom: none;
+            }
+        }
+        .church-header-center {
+            text-align: center;
+            margin: 1.5rem 0 1.1rem 0;
+            background: none;
+            border: none;
+            box-shadow: none;
+            padding: 0;
+            max-width: none;
+        }
+        .church-header-flex {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: none;
+            box-shadow: none;
+        }
+        .church-header-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1 1 auto;
+        }
+        .church-logo {
+            height: 32px;
+            width: auto;
+            flex-shrink: 0;
+            margin-right: 0.6rem;
+            background: none;
+            border: none;
+            box-shadow: none;
+            filter: none;
+        }
+        .church-title {
+            font-size: 2.1rem;
+            font-weight: 900;
+            color: #204a87;
+            letter-spacing: 1.2px;
+            line-height: 1.18;
+            margin-bottom: 0.13rem;
+            text-shadow: 0 2px 8px #4a6fa522, 0 1px 0 #fff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: none;
+            -webkit-background-clip: initial;
+            -webkit-text-fill-color: initial;
+            background-clip: initial;
+            transition: font-size 0.2s;
+        }
+        .church-subtitle {
+            font-size: 0.95rem; /* Smaller font size */
+            color: #333; /* Professional black color */
+            font-style: italic;
+            letter-spacing: 0.3px;
+            margin-bottom: 0.1rem;
+            font-weight: 500;
+            text-shadow: none; /* Removed text shadow for a cleaner look */
+        }
+        @media (max-width: 900px) {
+            .church-title {
+                font-size: 1.25rem;
+            }
+            .church-subtitle {
+                font-size: 0.95rem;
+            }
+            .church-logo {
+                height: 22px;
+                margin-right: 0.3rem;
+            }
+            .church-header-flex {
+                gap: 0.2rem;
+            }
+        }
+        @media (max-width: 600px) {
+            .church-title {
+                font-size: 1rem;
+            }
+            .church-subtitle {
+                font-size: 0.8rem;
+            }
+            .church-logo {
+                height: 16px;
+                margin-right: 0.15rem;
+            }
+            .church-header-flex {
+                gap: 0.1rem;
+            }
+        }
+        /* --- Scroller styles --- */
+        .event-scroller-wrap {
+            width: 100%;
+            background: #204a87;
+            overflow: hidden;
+            border-bottom: 2px solid #4a6fa5;
+            box-shadow: 0 2px 8px #0001;
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            min-height: 48px;
+        }
+        .event-scroller-label {
+            color: #ffe066;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            font-size: 1.08rem;
+            padding: 0 1.2rem 0 1.2rem;
+            white-space: nowrap;
+            background: transparent;
+            flex-shrink: 0;
+            border-right: 1.5px solid #4a6fa5;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            z-index: 3;
+            background: #204a87;
+            position: relative;
+        }
+        .event-scroller-outer {
+            overflow: hidden;
+            flex: 1 1 0;
+            min-width: 0;
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+        .event-scroller {
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            animation: scroll-events 25s linear infinite; /* Faster scrolling */
+            font-size: 1.1rem;
+            color: #fff;
+            padding: 0.8rem 0;
+            gap: 3rem; /* Wider spacing */
+            min-width: 100%;
+        }
+        .event-scroller .event-item {
+            display: inline-block;
+            margin-right: 3rem;
+            font-weight: 600;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3); /* Subtle text shadow */
+            animation: fadeInUp 1.2s ease-out;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.8px;
+        }
+        @keyframes scroll-events {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        @media (max-width: 700px) {
+            .event-scroller-label {
+                font-size: 1rem;
+                padding: 0 0.8rem;
+            }
+            .event-scroller {
+                font-size: 1rem;
+                gap: 1.5rem;
+                padding: 0.6rem 0;
+            }
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #ffffff; /* Bright white background */
+            color: #333; /* Dark text */
+            min-width: 220px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.25); /* Softer shadow */
+            padding: 12px 16px;
+            z-index: 10;
+            border-radius: 10px;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .dropdown-content p {
+            margin: 0;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #4a6fa5; /* Church theme color */
+            border-radius: 6px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .dropdown-content p:hover {
+            background-color: #e3eafc; /* Subtle hover effect */
+            color: #204a87; /* Darker hover text */
+        }
+        .categories .dropdown span {
+            font-size: 1rem; /* Smaller font size */
+            font-weight: 600; /* Professional weight */
+            color: #333; /* Default black color */
+            text-transform: capitalize; /* Capitalize each word */
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: color 0.3s ease, background 0.3s ease;
+            display: inline-block;
+            position: relative;
+            padding: 0.4rem 0.8rem; /* Adjusted padding for better spacing */
+        }
+
+        .categories .dropdown span:hover {
+            color: #000; /* Fully black on hover */
+            background: rgba(0, 0, 0, 0.1); /* Subtle background highlight */
+        }
+
+        .categories .dropdown span::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: #000; /* Black underline on hover */
+            transition: width 0.3s ease;
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+        }
+
+        .categories .dropdown span:hover::after {
+            width: 100%;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .categories .dropdown {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="church-header-center">
+        <div class="church-header-flex">
+            
+            <div class="church-header-text">
+                <div class="church-title">St. Gregorious Jacobite Syrian Orthodox Church Newcastle</div>
+                <div class="church-subtitle">"Under the Holy Apostolic See of Antioch and All the East."</div>
+            </div>
+        </div>
+    </div>
+    <header>
+
+        <div class="church-name" style="position:static;left:auto;transform:none;margin:0;">
+        
+        </div>
+        <nav class="categories main-nav">
+            <div class="dropdown">
+                <a href="../index.html"><span>HOME</span></a>
+            </div>
+            <div class="dropdown">
+                <span>ABOUT US</span>
+                <div class="dropdown-content">
+                    <a href="../aboutus/churchhistory.html" style="text-decoration: none;"><p>Our Church History</p></a>
+                    <a href="../aboutus/Hierarchy.html" style="text-decoration: none;"><p>Hierarchy</p></a>
+                    <a href="../aboutus/newtochurch.html" style="text-decoration: none;"><p>New To Church</p></a>
+                    <a href="../aboutus/jacobitehistory.html" style="text-decoration: none;"><p>Syrian Jacobite Church History</p></a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <span>MASS & SERVICE TIMINGS</span>
+                <div class="dropdown-content">
+                    <a href="../servicetimings/timings.html" style="text-decoration: none;"><p>Holy Qurbana Timings</p></a>
+                    <a href="../servicetimings/churchlocation.html" style="text-decoration: none;"><p>Church Location</p></a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <span>SPIRITUAL ORGANISATIONS</span>
+                <div class="dropdown-content">
+                    <p>Sunday School</p>
+                    <p>MGOCSM</p>
+                    <p>Women's League</p>
+                    <p>Youth Movement</p>
+                </div>
+            </div>
+            <div class="dropdown">
+                <span>PRAYERS & REQUEST</span>
+                <div class="dropdown-content">
+                    <a href="../prayers&request/prayerequest.html" style="text-decoration: none;"><p>Prayer Requests</p></a>
+                    <a href="../prayers&request/prayerbooks.html" style="text-decoration: none;"><p>Prayer Books</p></a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <span>OFFERINGS</span>
+                <div class="dropdown-content">
+                    <a href="../offerings/offerings.html" style="text-decoration: none;"><p>Offering</p></a>
+                    <a href="../offerings/charity.html" style="text-decoration: none;"><p>Charity</p></a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <span>ADMINISTRATION</span>
+                <div class="dropdown-content">
+                    <a href="../adminstration/committee.html" style="text-decoration: none;"><p>Committee</p></a>
+                    <a href="../adminstration/membership.html" style="text-decoration: none;"><p>Membership</p></a>
+                   
+                </div>
+            </div>
+            <div class="dropdown">
+                <span>GALLERY</span>
+                <div class="dropdown-content">
+                    <a href="../gallery/photos.html" style="text-decoration: none;"><p>Photos</p></a>
+                    <a href="../gallery/videos.html" style="text-decoration: none;"><p>Videos</p></a>
+                    <a href="../gallery/event.html" style="text-decoration: none;"><p>Events Picture</p></a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <span>CONTACT US</span>
+                <div class="dropdown-content">
+                    <a href="../gallery/event.html" style="text-decoration: none;"><p>Events</p></a>
+                    <a href="../contactus/pastevents.html" style="text-decoration: none;"><p>Past Events</p></a>
+                    <a href="../contactus/pastevents.html" style="text-decoration: none;"><p>Address</p></a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!-- Event scroller below the bar -->
+    <div class="event-scroller-wrap">
+        <span class="event-scroller-label">Forthcoming Events</span>
+        <div class="event-scroller-outer">
+            <div class="event-scroller">
+                <span class="event-item">വിശുദ്ധ കുർബാന. Holy Qurbana (Sunday, 15th June 2025)</span>
+                <span class="event-item">സൺഡേ സ്കൂൾ അർദ്ധ വാർഷിക പരീക്ഷ Sunday School Half Yearly Examination (Sunday, 22 June)</span>
+                <span class="event-item">Next Food Pantry event by St. Thomas JSOC London on 29/06/2025</span>
+                <span class="event-item">പെരുന്നാൾ മഹാ</span>
+            </div>
+        </div>
+    </div>
+    <div class="main-layout">
+        <div class="main-content">
+            <div class="custom-section">
+                <h2>Church History</h2>
+                <img src="../assets/jsicon.png" alt="Church Icon" style="margin: 1.5rem auto; display: block; width: 120px; height: auto;">
+                <p style="font-size: 1.2rem; font-style: italic; color: #555; margin-bottom: 2rem;">
+                    “These I will bring to my holy mountain, and make them joyful in my house of prayer; their burnt offerings and their sacrifices will be accepted on my altar; for my house shall be called a house of prayer for all peoples. Isaiah 56:7”
+                </p>
+                <p style="text-align: justify; line-height: 1.8; font-size: 1rem; color: #333;">
+                    In the 1980s, a significant number of Indian migrants, particularly from Kerala, settled in the UK, bringing with them the deep-rooted traditions of the Malankara Jacobite Syrian Orthodox Church. Recognising the need for spiritual fellowship, Rev. Fr. Jose Pallathatta—then a theology student in Dublin and now Metropolitan of the Cochin Diocese—visited London in 1989. Alongside pioneers like Mr. Chandy Thomas and Mr. Thankachan, he initiated efforts to form a congregation. The first Holy Qurbana was celebrated in June 1989 at St. Mary Aldermary Church, London. Following a visit by H.G. Abraham Mor Severios and increased community engagement, the first official general body meeting was held in December 1989, establishing the St. Thomas Jacobite Syrian Orthodox Church, the first of its kind in the UK.
+                </p>
+                <p style="text-align: justify; line-height: 1.8; font-size: 1rem; color: #333;">
+                    Over the years, the church saw spiritual leadership from several dedicated priests including Rev. Fr. George Vadath, Rev. Fr. Eldhose Kaungampillil, and Rev. Fr. Raju Abraham. In 2005, the church came under the direct supervision of the Patriarch of Antioch, His Holiness Moran Mor Ignatius Zakka I Iwas. A milestone was reached in 2007 when the church celebrated its parish day with the blessings and presence of H.B. Aboon Mor Baselios Thomas I and other high-ranking bishops. In 2009, the church hosted its first-ever Regional Family Conference at Ilford Town Hall, honouring long-standing community members.
+                </p>
+                <p style="text-align: justify; line-height: 1.8; font-size: 1rem; color: #333;">
+                    From its humble beginnings with six families, the church has grown to over 85 families by 2015. It is the only Jacobite Syrian Orthodox Church in the UK offering regular Sunday services and is a registered UK charity governed by an approved by-law. The church actively engages in community life through its Sunday School, Youth Association, Vanitha Samajam, Kudumba Units, and Charity and IT Wings. Cultural events, carol visits, and New Year celebrations are annual highlights.
+                </p>
+                <p style="text-align: justify; line-height: 1.8; font-size: 1rem; color: #333;">
+                    A significant dream came true in 2018 when, after years of prayer and perseverance, the church acquired its own premises—Harold Hill Baptist Church—which was officially inaugurated on 14th October 2018. Remarkably, during the COVID-19 pandemic, the church remained one of the few places worldwide able to conduct Holy Mass every Sunday while adhering to government restrictions. Under the compassionate leadership of the late Rev. Fr. Dr. Biji Chirathilattu, the church extended its mission by supporting local families with essential supplies.
+                </p>
+                <p style="text-align: justify; line-height: 1.8; font-size: 1rem; color: #333;">
+                    Today, the church continues its charitable legacy through initiatives like the Green Church movement, food pantries, recycling efforts, Barnabas Hub, Wayfinders, and the community café—living testimony to a thriving and compassionate faith community.
+                </p>
+            </div>
+        </div>
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3>Forthcoming Events</h3>
+                <div class="sidebar-event">
+                    <b>പെന്തിക്കോസ്തി പെരുന്നാൾ, വിശുദ്ധ കുർബാന</b><br>
+                    Holy Qurbana<br>
+                    <span style="color:#4a6fa5;">Sunday, 8th June 2025</span><br>
+                    <small>Morning Prayer Sunday 9:30 AM<br>Holy Qurbana Sunday 10:00 AM</small>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <h3>Latest News</h3>
+                <div class="sidebar-news">
+                    <b>സൺഡേ സ്കൂൾ അർദ്ധ വാർഷിക പരീക്ഷ</b><br>
+                    Sunday School Half Yearly Examination<br>
+                    <span style="color:#4a6fa5;">Sunday, 22 June</span>
+                    <p style="margin:0.5em 0 0 0;font-size:0.97em;">
+                        📘 Sunday School Half Yearly Examination<br>
+                        The Half Yearly Examination for our Sunday School students will be held on Sunday, 22nd June. This is a wonderful opportunity for children to reflect…
+                    </p>
+                </div>
+                <div class="sidebar-news">
+                    <b>Next Food Pantry event by St. Thomas JSOC London</b><br>
+                    <span style="color:#4a6fa5;">29/06/2025</span>
+                    <p style="margin:0.5em 0 0 0;font-size:0.97em;">
+                        🍽️ St. Thomas JSOC London – Food Pantry<br>
+                        We warmly invite you to our next Food Pantry event on Sunday, 29th June 2025, hosted by St. Thomas Jacobite Syrian Orthodox Church,…
+                    </p>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <h3>Contact Us</h3>
+                <div class="sidebar-contact">
+                    <b>Email</b><br>
+                    <a href="mailto:secretary@stthomasjsoclondon.org">secretary@stthomasjsoclondon.org</a><br>
+                    <b>Phone</b><br>
+                    <a href="tel:+447710021788">+44 7710021788</a><br>
+                    <b>Address</b><br>
+                    <span style="font-size:0.97em;">2A Taunton Rd, Harold Hill, Romford RM3 7ST, UK</span>
+                </div>
+            </div>
+        </aside>
+    </div>
+    <div class="main-layout">
+        <div class="main-content">
+            <div class="custom-section">
+                <h2>Upload Photos</h2>
+                <form id="photoUploadForm" enctype="multipart/form-data">
+                    <input type="file" id="photoInput" name="photos" accept="image/*" multiple style="margin-bottom: 1rem;">
+                    <button type="button" onclick="uploadPhotos()" style="padding: 0.8rem 1.5rem; background: #4a6fa5; color: #fff; border: none; border-radius: 8px; cursor: pointer;">Upload</button>
+                </form>
+                <p id="uploadStatus" style="margin-top: 1rem; color: green; display: none;">Photos uploaded successfully!</p>
+            </div>
+        </div>
+    </div>
+    <div class="custom-section">
+        <h2>Manage Uploaded Photos</h2>
+        <ul id="uploadedPhotosList" style="list-style: none; padding: 0; max-width: 600px; margin: 0 auto;">
+            <!-- Uploaded photos will be dynamically listed here -->
+        </ul>
+    </div>
+    <div class="custom-section">
+        <h2>Upload Videos</h2>
+        <form id="videoUploadForm" enctype="multipart/form-data">
+            <input type="file" id="videoInput" name="videos" accept="video/*" multiple style="margin-bottom: 1rem;">
+            <button type="button" onclick="uploadVideos()" style="padding: 0.8rem 1.5rem; background: #4a6fa5; color: #fff; border: none; border-radius: 8px; cursor: pointer;">Upload</button>
+        </form>
+        <p id="videoUploadStatus" style="margin-top: 1rem; color: green; display: none;">Videos uploaded successfully!</p>
+    </div>
+    <footer style="text-align: center; padding: 1rem; background: #4a6fa5; color: #fff; font-size: 0.9rem; margin-top: 2rem;">
+        © 2025 All Rights Reserved
+    </footer>
+    <script>
+        // Dropdown for nav (hover/click for mobile)
+        document.addEventListener('DOMContentLoaded', function() {
+            var navItems = document.querySelectorAll('.has-submenu');
+            navItems.forEach(function(item) {
+                // For mobile/touch: toggle on click
+                item.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 900) {
+                        e.stopPropagation();
+                        // Close others
+                        navItems.forEach(function(i) { if(i!==item) i.classList.remove('active'); });
+                        item.classList.toggle('active');
+                    }
+                });
+            });
+            // Close all on outside click (mobile)
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 900) {
+                    navItems.forEach(function(i) { i.classList.remove('active'); });
+                }
+            });
+        });
+
+        function uploadPhotos() {
+            const photoInput = document.getElementById('photoInput');
+            const uploadStatus = document.getElementById('uploadStatus');
+
+            if (photoInput.files.length === 0) {
+                alert('Please select at least one photo to upload.');
+                return;
+            }
+
+            const existingPhotos = JSON.parse(localStorage.getItem('uploadedPhotos')) || [];
+            const fileReaders = [];
+
+            for (const file of photoInput.files) {
+                if (!file.type.startsWith('image/')) {
+                    alert('Only image files are allowed.');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    existingPhotos.push(event.target.result); // Store the data URL
+                    localStorage.setItem('uploadedPhotos', JSON.stringify(existingPhotos));
+                    console.log('Uploaded photo stored:', event.target.result); // Debugging: Log stored photo
+                };
+                fileReaders.push(reader);
+                reader.readAsDataURL(file); // Convert file to data URL
+            }
+
+            Promise.all(fileReaders.map(reader => new Promise(resolve => reader.onloadend = resolve)))
+                .then(() => {
+                    uploadStatus.style.display = 'block';
+                    setTimeout(() => {
+                        uploadStatus.style.display = 'none';
+                    }, 3000);
+                    photoInput.value = ''; // Clear the file input
+                    alert('Photos uploaded successfully!'); // Notify the user
+                    console.log('All photos uploaded successfully.'); // Debugging: Log success
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const uploadedPhotosList = document.getElementById('uploadedPhotosList');
+
+            function loadUploadedPhotos() {
+                const uploadedPhotos = JSON.parse(localStorage.getItem('uploadedPhotos')) || [];
+                uploadedPhotosList.innerHTML = '';
+
+                if (uploadedPhotos.length === 0) {
+                    uploadedPhotosList.innerHTML = '<li style="text-align: center; color: #555;">No photos uploaded yet.</li>';
+                    return;
+                }
+
+                uploadedPhotos.forEach((photoDataUrl, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.style.marginBottom = '1rem';
+                    listItem.style.display = 'flex';
+                    listItem.style.alignItems = 'center';
+                    listItem.style.justifyContent = 'space-between';
+
+                    listItem.innerHTML = `
+                        <img src="${photoDataUrl}" alt="Uploaded Photo ${index + 1}" style="width: 80px; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);">
+                        <button data-index="${index}" style="padding: 0.5rem 1rem; background: #ff4d4d; color: #fff; border: none; border-radius: 8px; cursor: pointer;">Delete</button>
+                    `;
+
+                    listItem.querySelector('button').addEventListener('click', function () {
+                        deletePhoto(index);
+                    });
+
+                    uploadedPhotosList.appendChild(listItem);
+                });
+            }
+
+            function deletePhoto(index) {
+                const uploadedPhotos = JSON.parse(localStorage.getItem('uploadedPhotos')) || [];
+                uploadedPhotos.splice(index, 1); // Remove the photo at the specified index
+                localStorage.setItem('uploadedPhotos', JSON.stringify(uploadedPhotos));
+                loadUploadedPhotos(); // Refresh the list
+                alert('Photo deleted successfully!');
+            }
+
+            loadUploadedPhotos(); // Load photos on page load
+        });
+
+        function uploadVideos() {
+            const videoInput = document.getElementById('videoInput');
+            const videoUploadStatus = document.getElementById('videoUploadStatus');
+            const MAX_VIDEO_SIZE_MB = 20000; // Set a maximum size limit (e.g., 2MB)
+
+            if (videoInput.files.length === 0) {
+                alert('Please select at least one video to upload.');
+                return;
+            }
+
+            const existingVideos = JSON.parse(localStorage.getItem('uploadedVideos')) || [];
+            const fileReaders = [];
+
+            for (const file of videoInput.files) {
+                if (!file.type.startsWith('video/')) {
+                    alert('Only video files are allowed.');
+                    return;
+                }
+
+                if (file.size > MAX_VIDEO_SIZE_MB * 1024 * 1024) {
+                    alert(`File "${file.name}" exceeds the maximum size of ${MAX_VIDEO_SIZE_MB}MB.`);
+                    continue;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    existingVideos.push(event.target.result); // Store the data URL
+                    try {
+                        localStorage.setItem('uploadedVideos', JSON.stringify(existingVideos));
+                        console.log('Uploaded video stored:', event.target.result); // Debugging: Log stored video
+                    } catch (error) {
+                        console.error('Error storing video:', error);
+                        alert('Failed to upload video. Storage limit exceeded.');
+                    }
+                };
+                fileReaders.push(reader);
+                reader.readAsDataURL(file); // Convert file to data URL
+            }
+
+            Promise.all(fileReaders.map(reader => new Promise(resolve => reader.onloadend = resolve)))
+                .then(() => {
+                    videoUploadStatus.style.display = 'block';
+                    setTimeout(() => {
+                        videoUploadStatus.style.display = 'none';
+                    }, 3000);
+                    videoInput.value = ''; // Clear the file input
+                    alert('Videos uploaded successfully!'); // Notify the user
+                    console.log('All videos uploaded successfully.'); // Debugging: Log success
+                });
+        }
+    </script>
+</body>
+</html>
